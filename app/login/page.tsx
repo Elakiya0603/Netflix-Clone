@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Text, TextInput } from "@mantine/core";
+import CustomTextInput from "../components/customTextInput";
+import CustomButton from "../components/customButton";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -38,6 +40,7 @@ export default function LoginPage() {
         localStorage.setItem("login_email", emailTrimmed);
         router.push("/otp");
       } else if (data.success) {
+        localStorage.setItem("login_email", emailTrimmed);
         router.push("/browse");
       } else {
         setError(data.error || "Login failed");
@@ -56,52 +59,26 @@ export default function LoginPage() {
       <div className="bg-zinc-900 p-8 rounded-xl w-[350px]">
         <Text size="md" className="text-white text-2xl mb-6">Sign In</Text>
 
-        <TextInput
-          styles={{
-            root: {
-              border: "none",
-            },
-            input: {
-              backgroundColor: "#27272a",
-              color: "white",
-              border: "none",
-              outline: "none",
-              boxShadow: "none",
-            },
-          }}
+        <CustomTextInput
           placeholder="Email"
-          className="w-full p-3 rounded bg-zinc-800 text-white mb-4"
           value={email}
-          onChange={(event) => setEmail(event.currentTarget.value)}
-        />
-      
-        <TextInput
-          styles={{
-            root: {
-              border: "none",
-            },
-            input: {
-              backgroundColor: "#27272a",
-              color: "white",
-              border: "none",
-              outline: "none",
-              boxShadow: "none",
-            },
-          }}
-          placeholder="Password"
+          onChange={(e) => setEmail(e.currentTarget.value)}
           className="w-full p-3 rounded bg-zinc-800 text-white mb-4"
+        />
+
+        <CustomTextInput
+          placeholder="Password"
+          type="password"
           value={password}
-          onChange={(event) => setPassword(event.currentTarget.value)}
+          onChange={(e) => setPassword(e.currentTarget.value)}
+          className="w-full p-3 rounded bg-zinc-800 text-white mb-4"
         />
 
         {error && <p className="text-red-500 mb-3">{error}</p>}
 
-        <button
-          onClick={handleLogin}
-          className="w-full bg-red-600 py-3 rounded text-white font-semibold cursor-pointer"
-        >
+          <CustomButton onClick={handleLogin}>
           Sign In
-        </button>
+        </CustomButton>
       </div>
     </div>
   );

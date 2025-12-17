@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import CustomButton from "../components/customButton";
+import CustomTextInput from "../components/customTextInput";
 
 type User = {
   email: string;
@@ -59,25 +61,30 @@ export default function RegUsersPage() {
       </ul>
 
       <div className="flex gap-2 mb-4">
-        <input
+        <CustomTextInput
           type="email"
           placeholder="Email"
           className="p-2 text-white rounded w-72"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <input
-          type="text"
+        <CustomTextInput
+          type="password"
           placeholder="Password"
-          className="p-2 text-white rounded w-72"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.currentTarget.value)}
+          className="p-2 text-white rounded w-72 bg-zinc-800"
         />
-      </div>
 
-      <button onClick={addUser} className="bg-red-600 px-4 py-2 rounded">
+      </div>
+      <CustomButton
+        onClick={addUser}
+        size="sm"
+        fullWidth={false}
+      >
         Add User
-      </button>
+      </CustomButton>
+
     </div>
   );
 }

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import CustomButton from "../components/customButton";
+import CustomTextInput from "../components/customTextInput";
 
 export default function OTPPage() {
   const router = useRouter();
@@ -34,21 +36,20 @@ export default function OTPPage() {
       <div className="bg-zinc-900 p-8 rounded-xl w-[350px]">
         <h1 className="text-white text-2xl mb-6">Verify OTP</h1>
 
-        <input
-          className="w-full p-3 rounded bg-zinc-800 text-white mb-4"
+        <CustomTextInput
           placeholder="Enter OTP"
           value={otp}
-          onChange={(e) => setOtp(e.target.value)}
+          onChange={(e) => setOtp(e.currentTarget.value)}
+          className="w-full p-3 rounded bg-zinc-800 text-white mb-4"
         />
+
 
         {error && <p className="text-red-500 mb-3">{error}</p>}
 
-        <button
-          onClick={handleVerify}
-          className="w-full bg-red-600 py-3 rounded text-white font-semibold"
-        >
+        <CustomButton onClick={handleVerify}>
           Verify
-        </button>
+        </CustomButton>
+
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import CustomButton from "../components/customButton";
+import CustomTextInput from "../components/customTextInput";
 
 const avatarColors = [
   "bg-red-600",
@@ -97,13 +99,15 @@ export default function BrowsePage() {
             <h1 className="text-3xl font-bold">
               🎬 Hi, {username}
             </h1>
+        <CustomButton
+          onClick={handleLogout}
+          variant="secondary"
+          size="sm"
+          fullWidth={false}
+        >
+          Logout
+        </CustomButton>
 
-            <button
-              onClick={handleLogout}
-              className="bg-zinc-800 px-4 py-2 rounded hover:bg-red-600 transition cursor-pointer"
-            >
-              Logout
-            </button>
           </header>
 
 
@@ -137,18 +141,20 @@ export default function BrowsePage() {
 
         {profiles.length < 4 && (
           <div className="flex gap-2">
-            <input
-              className="p-2 bg-zinc-800 rounded"
+            <CustomTextInput
               placeholder="Profile name"
               value={profileName}
-              onChange={(e) => setProfileName(e.target.value)}
+              onChange={(e) => setProfileName(e.currentTarget.value)}
+              className="p-2 bg-zinc-800 rounded"
             />
-            <button
+
+            <CustomButton
               onClick={createProfile}
-              className="bg-red-600 px-4 py-2 rounded hover:bg-red-700"
+              fullWidth={false}
             >
               Add Profile
-            </button>
+            </CustomButton>
+
           </div>
         )}
 
