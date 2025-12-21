@@ -1,13 +1,13 @@
-import { MantineProvider } from "@mantine/core";
 import "./globals.css";
+import ClientMantineProvider from "./components/ClientMantineProvider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <MantineProvider>
+      <body style={{ zIndex: 0 }}>
+        <ClientMantineProvider>
           {children}
-        </MantineProvider>
+        </ClientMantineProvider>
       </body>
     </html>
   );
