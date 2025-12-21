@@ -24,6 +24,9 @@ export default function BrowsePage() {
   const [username, setUsername] = useState("");
   const [profiles, setProfiles] = useState<any[]>([]);
   const [profileName, setProfileName] = useState("");
+    const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+
   const [error, setError] = useState("");
 
   const loggedInEmail =
@@ -46,6 +49,10 @@ export default function BrowsePage() {
   window.location.href = "/login";
 };
 
+const selectProfile = (profile: any) => {
+  localStorage.setItem("selected_profile", JSON.stringify(profile));
+  window.location.href = "/home";
+};
 
 
   // 🔹 Create profile
@@ -76,6 +83,45 @@ export default function BrowsePage() {
     }
   };
 
+  // Edit Profile
+
+   const startEdit = (profile: any) => {
+    setEditingId(profile._id);
+    setEditingName(profile.name);
+  };
+
+  const saveEdit = async () => {
+    if (!editingName.trim() || !editingId) return;
+
+    await fetch("/api/profiles", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        profileId: editingId,
+        name: editingName.trim(),
+      }),
+    });
+
+    setEditingId(null);
+    setEditingName("");
+    fetchProfiles();
+  };
+
+  // Delete Profile
+
+  const deleteProfile = async (profileId: string) => {
+    const ok = confirm("Delete this profile?");
+    if (!ok) return;
+
+    await fetch("/api/profiles", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ profileId }),
+    });
+
+    fetchProfiles();
+  };
+
   // 🔹 Username from email
   useEffect(() => {
     const email = localStorage.getItem("login_email");
@@ -92,69 +138,79 @@ export default function BrowsePage() {
   
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
-      
-      {/* 🔹 Header */}
+       <div className="min-h-screen bg-black text-white flex flex-col">
+      {/* Header */}
       <header className="px-10 py-6 flex justify-between items-center">
-            <h1 className="text-3xl font-bold">
-              🎬 Hi, {username}
-            </h1>
-        <CustomButton
-          onClick={handleLogout}
-          variant="secondary"
-          size="sm"
-          fullWidth={false}
-        >
+        <h1 className="text-3xl font-bold">Who’s watching?</h1>
+        <CustomButton onClick={handleLogout} size="sm" fullWidth={false}>
           Logout
         </CustomButton>
+      </header>
 
-          </header>
-
-
-      {/* 🔹 Profiles Section */}
+      {/* Profiles */}
       <main className="flex-1 flex flex-col items-center justify-center">
-        <h2 className="text-2xl mb-6">Who’s watching?</h2>
-
-        <div className="flex gap-6 mb-6">
+        <div className="flex gap-8 mb-10">
           {profiles.map((p) => (
-                            <div
-                  key={p._id}
-                  className="flex flex-col items-center gap-3 cursor-pointer group"
-                >
-                  {/* Avatar */}
-                  <div
-                    className={`w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold text-white
-                      ${getAvatarColor(p.name)}
-                      group-hover:scale-110 transition`}
-                  >
-                    {p.name.charAt(0).toUpperCase()}
-                  </div>
+            <div
+              key={p._id}
+              className="relative flex flex-col items-center gap-3 group"
+            >
+              {/* Avatar */}
+              <div
+                onClick={() => selectProfile(p)}
+                className={`w-24 h-24 rounded-full flex items-center justify-center
+                text-4xl font-bold cursor-pointer text-white
+                ${getAvatarColor(p.name)}
+                group-hover:scale-110 transition`}
+              >
+                {p.name.charAt(0).toUpperCase()}
+              </div>
 
-                  {/* Name */}
-                  <p className="text-lg group-hover:text-red-500 transition">
-                    {p.name}
-                  </p>
+              {/* Name / Edit */}
+              {editingId === p._id ? (
+                <div className="flex gap-2">
+                  <input
+                    value={editingName}
+                    onChange={(e) => setEditingName(e.target.value)}
+                    className="bg-zinc-800 px-2 rounded"
+                  />
+                  <button onClick={saveEdit}>✅</button>
                 </div>
+              ) : (
+                <p className="text-lg">{p.name}</p>
+              )}
 
+              {/* Hover Actions */}
+              <div className="absolute -top-2 -right-2 hidden group-hover:flex gap-2">
+                <button
+                  onClick={() => startEdit(p)}
+                  className="bg-zinc-700 px-2 py-1 rounded text-sm"
+                >
+                  ✏️
+                </button>
+                <button
+                  onClick={() => deleteProfile(p._id)}
+                  className="bg-red-600 px-2 py-1 rounded text-sm"
+                >
+                  🗑️
+                </button>
+              </div>
+            </div>
           ))}
         </div>
 
+        {/* Add Profile */}
         {profiles.length < 4 && (
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <CustomTextInput
               placeholder="Profile name"
               value={profileName}
               onChange={(e) => setProfileName(e.currentTarget.value)}
-              className="p-2 bg-zinc-800 rounded"
+              className="bg-zinc-800 px-3 py-2 rounded"
             />
-
-            <CustomButton
-              onClick={createProfile}
-              fullWidth={false}
-            >
+            <CustomButton onClick={createProfile} fullWidth={false}>
               Add Profile
             </CustomButton>
-
           </div>
         )}
 
@@ -163,3 +219,4 @@ export default function BrowsePage() {
     </div>
   );
 }
+
