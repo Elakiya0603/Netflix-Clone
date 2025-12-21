@@ -1,4 +1,5 @@
 import clientPromise from "@/lib/mongo";
+import { ObjectId } from "mongodb";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -48,6 +49,47 @@ export async function POST(req: Request) {
     accountEmail: email,
     name,
     createdAt: new Date(),
+  });
+
+  return Response.json({ success: true });
+}
+
+export async function PUT(req: Request) {
+  const { profileId, name } = await req.json();
+
+  if (!profileId || !name) {
+    return Response.json(
+      { error: "Profile ID and name required" },
+      { status: 400 }
+    );
+  }
+
+  const client = await clientPromise;
+  const db = client.db();
+
+  await db.collection("profiles").updateOne(
+    { _id: new ObjectId(profileId) },
+    { $set: { name } }
+  );
+
+  return Response.json({ success: true });
+}
+
+export async function DELETE(req: Request) {
+  const { profileId } = await req.json();
+
+  if (!profileId) {
+    return Response.json(
+      { error: "Profile ID required" },
+      { status: 400 }
+    );
+  }
+
+  const client = await clientPromise;
+  const db = client.db();
+
+  await db.collection("profiles").deleteOne({
+    _id: new ObjectId(profileId),
   });
 
   return Response.json({ success: true });
